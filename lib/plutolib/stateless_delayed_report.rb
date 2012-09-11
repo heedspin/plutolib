@@ -8,13 +8,18 @@ module Plutolib::StatelessDelayedReport
   end
 
   def run_in_background!(method_to_run=nil)
-    @method_to_run = method_to_run
-    self.send_later(:runner_main)
+    if self.respond_to?(:delayed_job_method)
+      self.delayed_job_method = method_to_run
+    end
+    self.delay.delayed_job_main
   end
 
-  def runner_main
+  def delayed_job_main
+    method_to_run = if self.respond_to?(:delayed_job_method)
+      self.delayed_job_method
+    end
+    method_to_run ||= :run_report
     begin
-      method_to_run = @method_to_run || 'run_report'
       log "Starting #{method_to_run}"
       self.send(method_to_run)
       log "Finished #{method_to_run}"
