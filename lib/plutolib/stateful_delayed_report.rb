@@ -38,10 +38,6 @@ module Plutolib::StatefulDelayedReport
     "#{self.class.name.demodulize.titleize} #{self.id}"
   end
   
-  def set_loggers
-    self.loggers.push self.string_logger
-  end
-  
   def set_delayed_job_status!(status=nil)
     if status.nil? or self.delayed_job_status != status
       self.delayed_job_status = status if status
@@ -56,7 +52,8 @@ module Plutolib::StatefulDelayedReport
     method_to_run ||= :run_report
     begin
       self.set_delayed_job_status! Plutolib::DelayedJobStatus.running
-      self.set_loggers
+      self.delayed_job_log = nil
+      self.loggers.push self.string_logger
       log "#{self.report_name} Starting"
       self.send(method_to_run)
       self.delayed_job_status = Plutolib::DelayedJobStatus.complete if self.delayed_job_status.running?
