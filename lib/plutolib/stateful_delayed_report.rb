@@ -38,7 +38,7 @@ module Plutolib::StatefulDelayedReport
     "#{self.class.name.demodulize.titleize} #{self.id}"
   end
 
-  def set_delayed_job_status(status=nil)
+  def set_delayed_job_status(status)
     self.delayed_job_status = status
     self.delayed_job_status_id = status.try(:id)
   end
@@ -47,6 +47,7 @@ module Plutolib::StatefulDelayedReport
     if status.nil? or self.delayed_job_status != status
       self.delayed_job_status = status if status
       self.update_column(:delayed_job_status_id, self.delayed_job_status.id)  
+      self.reload
     end
   end
   
@@ -64,7 +65,7 @@ module Plutolib::StatefulDelayedReport
       self.send(method_to_run)
       self.set_delayed_job_status(Plutolib::DelayedJobStatus.complete) if self.delayed_job_status.try(:running?)
       log "#{self.report_name} Finished with status #{self.delayed_job_status}"
-      self.save
+      self.save!
     rescue => exc
       backtrace = exc.respond_to?(:backtrace) ? exc.backtrace : []
       error_title = "#{self.report_name} exception: #{exc.class.name}: #{exc.message}"
