@@ -8,8 +8,10 @@ module Plutolib::StatelessDelayedReport
   end
 
   def run_in_background!(method_to_run=nil)
-    if self.respond_to?(:delayed_job_method)
+    if self.respond_to?(:delayed_job_method=)
       self.delayed_job_method = method_to_run
+    else
+      @delayed_job_method = method_to_run
     end
     self.delay.delayed_job_main
   end
@@ -17,6 +19,8 @@ module Plutolib::StatelessDelayedReport
   def delayed_job_main
     method_to_run = if self.respond_to?(:delayed_job_method)
       self.delayed_job_method
+    else
+      @delayed_job_method
     end
     method_to_run ||= :run_report
     begin
