@@ -14,7 +14,7 @@ module Plutolib::ToXls
   end
   
   def xls_initialize
-    raise 'Implement me!!!'
+    # Implement me!!!
   end
   
   def xls_fields
