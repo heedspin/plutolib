@@ -34,7 +34,13 @@ module Plutolib::ToXls
     sheet = book.create_worksheet
     sheet.name = self.xls_sheet_name
     column_formats = xls_column_formats(self.xls_fields, sheet)
-    self.all_data.each do |data_object|
+    data = if self.respond_to?(:xls_data)
+      self.xls_data
+    else
+      # Backwards compatibility
+      self.all_data
+    end
+    data.each do |data_object|
       sheet_row = sheet.row(sheet.last_row_index+1)
       row_data = self.xls_fields.map { |field| 
         field.value_for(data_object) 
