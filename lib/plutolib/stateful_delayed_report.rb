@@ -9,14 +9,12 @@ module Plutolib::StatefulDelayedReport
       before_save :save_string_logger
       extend ActiveHash::Associations::ActiveRecordExtensions
       belongs_to_active_hash :delayed_job_status, :class_name => 'Plutolib::DelayedJobStatus'
-      attr_accessor :delayed_method_to_run
+      attr_accessor :delayed_job_method
     RUBY
   end
   
   def run_in_background!(method_to_run=nil)
-    if self.respond_to?(:delayed_job_method)
-      self.delayed_job_method = method_to_run
-    end
+    self.delayed_job_method = method_to_run
     self.delayed_job_status = Plutolib::DelayedJobStatus.queued
     # This logic is suspicious.  Either always save or always update columns?
     if self.new_record? or self.delayed_job_method
@@ -53,10 +51,7 @@ module Plutolib::StatefulDelayedReport
   
   def delayed_job_main
     return if self.delayed_job_status.try(:complete?)
-    method_to_run = if self.respond_to?(:delayed_job_method)
-      self.delayed_job_method
-    end
-    method_to_run ||= :run_report
+    method_to_run = self.delayed_job_method || :run_report
     begin
       self.set_delayed_job_status! Plutolib::DelayedJobStatus.running
       self.delayed_job_log = nil

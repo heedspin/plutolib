@@ -4,6 +4,7 @@ module Plutolib::StatelessDelayedReport
   def self.included(base)
     base.class_eval <<-RUBY
       include Plutolib::LoggerUtils
+      attr_accessor :delayed_job_method
     RUBY
   end
 

@@ -9,7 +9,11 @@ module Plutolib::ToXls
       @value_block = value_block
     end
     def value_for(data_object)
-      @value_block.call(data_object)
+      value = @value_block.call(data_object)
+      if value.is_a?(BigDecimal)
+        value = value.to_f.round(2)
+      end
+      value
     end
   end
   
