@@ -117,10 +117,11 @@ module Plutolib::ToXls
     # 156.chr => \234 => \x9c
     # 157.chr => \235 => \x9d
     # 162.chr => \242 => \xA2
+    # 188.chr => \274 => \xBC
     # 194.chr => \302 => \xC2
     # 195.chr => \303 => \xC3  ==> bang
     # 226.chr => \342 => \xE2
-    EVIL_CHARACTERS = [153, 160, 162, 194, 195, 226]
+    EVIL_CHARACTERS = [153, 160, 162, 188, 194, 195, 226]
     def xls_clean(txt)
       return txt unless txt.is_a?(String)
 
