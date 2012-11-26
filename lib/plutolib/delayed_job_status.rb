@@ -1,4 +1,4 @@
-require 'active_hash_methods'
+require 'plutolib/active_hash_methods'
 class Plutolib::DelayedJobStatus < ActiveHash::Base
   self.data = [
     {:id => 1, :name => 'Queued'},
@@ -8,7 +8,7 @@ class Plutolib::DelayedJobStatus < ActiveHash::Base
     {:id => 5, :name => 'Stopping'},
     {:id => 6, :name => 'Stopped'}
   ]
-  include ActiveHashMethods
+  include Plutolib::ActiveHashMethods
   
   def in_progress?
     self.queued? || self.running?
