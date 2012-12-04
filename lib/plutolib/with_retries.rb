@@ -13,12 +13,19 @@ module Plutolib::WithRetries
           log_error "Server Error on attempt #{attempts}.  Retrying..."
           log_error "#{exception.class.name} #{exception.message}" + exception.backtrace.join("\n")
         end
-      rescue EOFError
+      rescue ActiveResource::TimeoutError
         if attempts == MAX_RETRIES
           log_error "Timeout on attempt #{attempts}.  Giving up..."
           raise $!
         else
           log_error "Timeout on attempt #{attempts}.  Retrying..."
+        end
+      rescue EOFError
+        if attempts == MAX_RETRIES
+          log_error "EOFError on attempt #{attempts}.  Giving up..."
+          raise $!
+        else
+          log_error "EOFError on attempt #{attempts}.  Retrying..."
         end
       rescue
         raise $!
