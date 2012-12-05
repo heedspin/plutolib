@@ -37,7 +37,7 @@ module Plutolib::ToXls
     self.xls_fields.push Plutolib::ToXls::Field.new(column_header, number_format, &value_block)
   end
   
-  def to_xls
+  def to_xls(path_to_file=nil)
     book = Spreadsheet::Workbook.new
     sheet = book.create_worksheet
     sheet.name = self.xls_sheet_name
@@ -59,10 +59,17 @@ module Plutolib::ToXls
         sheet_row.set_format(x, column_formats[x])
       end
     end
-
-    s = StringIO.new
-    book.write(s)
-    s.string
+    
+    if path_to_file
+      File.open(path_to_file, 'w+') do |output|
+        book.write(output)
+      end
+      true
+    else
+      s = StringIO.new
+      book.write(s)
+      s.string
+    end
   end
   
   def xls_filename
