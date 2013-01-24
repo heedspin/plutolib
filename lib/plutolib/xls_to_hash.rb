@@ -1,3 +1,5 @@
+require 'spreadsheet'
+
 class Plutolib::XlsToHash
   def self.parse_file(path, &block)
     book = Spreadsheet.open(path)
