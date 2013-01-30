@@ -1,6 +1,6 @@
 module Plutolib::WithRetries  
   def with_retries(&block)
-    self.class.with_retries(&block)
+    Plutolib::WithRetries.with_retries(&block)
   end
   
   MAX_RETRIES=3
