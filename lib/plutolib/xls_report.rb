@@ -26,26 +26,38 @@ module Plutolib::XlsReport
     self.fields.push(field)
   end
   
-  def to_xls
+  def each_sheet(&block)
+    yield(nil, self.fields, self.all_data)
+  end
+  
+  def to_xls(export_file=nil)
     book = Spreadsheet::Workbook.new
-    sheet = book.create_worksheet
-    sheet.name = self.sheet_name
-    column_formats = get_column_formats(self.fields, sheet)
-    self.all_data.each do |data_object|
-      sheet_row = sheet.row(sheet.last_row_index+1)
-      row_data = self.fields.map { |field| 
-        field.value_for(data_object) 
-      }
-      sheet_row.push *row_data
-      # Set formats for each cell in the row.
-      for x in 0..row_data.size-1
-        sheet_row.set_format(x, column_formats[x])
+    self.each_sheet do |sheet_name, sheet_fields, sheet_data|
+      sheet = book.create_worksheet
+      sheet.name = sheet_name if sheet_name
+      column_formats = get_column_formats(sheet_fields, sheet)
+      row_number = 1
+      sheet_data.each do |data_object|
+        sheet_row = sheet.row(sheet.last_row_index+1)
+        row_data = sheet_fields.map { |field| 
+          field.value_for(data_object) 
+        }
+        # sheet_row.push *row_data
+        # Set formats for each cell in the row.
+        for x in 0..row_data.size-1
+          sheet[row_number, x] = row_data[x]
+          # sheet_row.set_format(x, column_formats[x])
+        end
+        row_number += 1
       end
     end
-
-    s = StringIO.new
-    book.write(s)
-    s.string
+    if export_file
+      book.write export_file
+    else
+      s = StringIO.new
+      book.write(s)
+      s.string
+    end
   end
   
   protected

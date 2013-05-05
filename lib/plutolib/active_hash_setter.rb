@@ -14,7 +14,7 @@ module Plutolib::ActiveHashSetter
             if thing.is_a?(#{klass.name})
               write_attribute(#{foreign_key}, thing.id)
             elsif thing.is_a?(String) and thing.present?
-              if new_thing = thing.to_i.to_s == thing ? #{klass.name}.find_by_id(thing) : #{klass.name}.find_by_name(thing)
+              if new_thing = (thing.to_i.to_s == thing ? #{klass.name}.find_by_id(thing) : #{klass.name}.find_by_name(thing))
                 write_attribute(#{foreign_key}, new_thing.id)
               else
                 exc = thing + ' is not a valid #{klass.name}'
