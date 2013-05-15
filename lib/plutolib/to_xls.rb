@@ -1,5 +1,4 @@
 require 'spreadsheet'
-# require 'plutolib/clean_evil_characters'
 
 module Plutolib::ToXls
   class Field
@@ -10,18 +9,24 @@ module Plutolib::ToXls
       @column_header = column_header
       @value_block = value_block
     end
-    def value_for(data_object)
+    def value_for(data_object, cleaner)
       value = @value_block.call(data_object)
       if value.is_a?(BigDecimal)
         value = value.to_f.round(2)
-      # elsif value.is_a?(String)
-      #   value = clean_evil_characters(value)
+      elsif value.is_a?(String)
+        value = cleaner.xls_clean_string(value)
       end
       value
     end
   end
   
+  # Overwrite me to implement magic.
+  def xls_clean_string(txt)
+    txt
+  end
+  
   def xls_initialize
+    # require 'plutolib/clean_evil_characters'
     # Implement me!!!
   end
   
@@ -57,9 +62,10 @@ module Plutolib::ToXls
       sheet_data.each do |data_object|
         sheet_row = sheet.row(sheet.last_row_index+1)
         row_data = sheet_fields.map { |field| 
-          field.value_for(data_object) 
+          field.value_for(data_object, self) 
         }
         sheet_row.push *row_data
+        # Rails.logger.debug row_data.inspect
         # Set formats for each cell in the row.
         for x in 0..row_data.size-1
           # sheet[row_number, x] = row_data[x]
@@ -109,6 +115,7 @@ module Plutolib::ToXls
 
     def xls_column_formats(fields, sheet)
       default_column_formats = {}
+      # Rails.logger.debug fields.map(&:column_header).inspect
       for x in 0..fields.size-1
         field = fields[x]
         sheet.row(0).push field.column_header
