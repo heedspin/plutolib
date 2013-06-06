@@ -109,7 +109,11 @@ module Plutolib::ToXls
 
   def xls_no_decimals_format
     @no_decimals_number_format ||= Spreadsheet::Format.new(:number_format => '#,##0')
-  end  
+  end
+  
+  def xls_dollar_format
+    @xls_dollar_format ||= Spreadsheet::Format.new(:number_format => '$#,##0.00')
+  end
 
   protected
 
