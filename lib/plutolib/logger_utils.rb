@@ -1,7 +1,7 @@
 module Plutolib::LoggerUtils
   module Methods
     def loggers=(*args)
-      @loggers = *args
+      @loggers = args.flatten
     end
     def loggers
       @loggers ||= self.class.loggers.clone
