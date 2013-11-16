@@ -5,6 +5,7 @@ module Plutolib::SerializedAttributes
         args ||= {}
         storage_column = args[:data] || 'data'
         deserialize = args[:deserialize] || args[:des]
+        default = args.member?(:default) ? args[:default] : 0
         unless self.method_defined?(storage_column)
           self.class_eval <<-RUBY
           def #{storage_column}
@@ -12,7 +13,7 @@ module Plutolib::SerializedAttributes
               if x = super
                 @#{storage_column} = x.is_a?(String) ? ActiveSupport::JSON.decode(x) : x
               else
-                @#{storage_column} = Hash.new(0)
+                @#{storage_column} = Hash.new(#{default})
               end
             end
             @#{storage_column}

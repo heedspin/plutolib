@@ -115,6 +115,10 @@ module Plutolib::ToXls
     @xls_dollar_format ||= Spreadsheet::Format.new(:number_format => '$#,##0.00')
   end
 
+  def xls_rounded_dollar_format
+    @xls_rounded_dollar_format ||= Spreadsheet::Format.new(:number_format => '$#,##0')
+  end
+
   protected
 
     def xls_column_formats(fields, sheet)
