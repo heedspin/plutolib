@@ -50,10 +50,14 @@ module Plutolib
           logger.info self.name.demodulize.to_s + ': ' + msg
         end
       end
-      def self.log_error(msg)
-        self.loggers.each do |logger|
-          logger.error self.name.demodulize.to_s + ': ' + msg
+      def self.log_error(msg, exception=nil)
+        exception_msg = if exception
+          "\n" + exception.class.name + ' ' + exception.message + "\n" + exception.backtrace.join("\n")
         end
+        self.loggers.each do |logger|
+          logger.error self.class.name.demodulize + ': ' + msg + exception_msg
+        end
+        msg
       end
       RUBY
     end
