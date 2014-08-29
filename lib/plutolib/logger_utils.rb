@@ -14,9 +14,10 @@ module Plutolib
       def logging_to_stdout?
         @logging_to_stdout
       end
-      def log(msg)
+      def log(msg, obj=nil)
+        obj_log = obj.nil? ? '' : "\n" + obj.inspect
         self.loggers.each do |logger|
-          logger.info "#{self.class.name.demodulize}: #{msg}"
+          logger.info "#{self.class.name.demodulize}: #{msg}#{obj_log}"
         end
         msg
       end
@@ -45,9 +46,10 @@ module Plutolib
       def self.logging_to_stdout?
         @@logging_to_stdout
       end
-      def self.log(msg)
+      def self.log(msg, obj=nil)
+        obj_log = obj.nil? ? '' : "\n" + obj.inspect
         self.loggers.each do |logger|
-          logger.info self.name.demodulize.to_s + ': ' + msg
+          logger.info self.name.demodulize.to_s + ': ' + msg + obj_log
         end
       end
       def self.log_error(msg, exception=nil)

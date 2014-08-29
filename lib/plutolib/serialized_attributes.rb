@@ -26,6 +26,13 @@ module Plutolib
               end
             RUBY
           end
+          self.class_eval <<-RUBY
+          attr_accessor :#{key}
+          def #{key}=(val)
+            self.#{storage_column}_will_change!
+            self.#{storage_column}['#{key}'] = val
+          end
+          RUBY
           if deserialize
             self.class_eval <<-RUBY
             def #{key}
@@ -39,11 +46,6 @@ module Plutolib
             end
             RUBY
           end
-          self.class_eval <<-RUBY
-          def #{key}=(val)
-            self.#{storage_column}['#{key}'] = val
-          end
-          RUBY
         end
       end
     end
