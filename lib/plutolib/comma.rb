@@ -8,5 +8,9 @@ module Plutolib
 	    result += ('.' + parts[1]) if parts.size > 1
 	    result
 	  end
+
+    def self.included(base)
+    	base.extend Comma
+    end
 	end
 end

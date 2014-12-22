@@ -19,17 +19,16 @@ module Plutolib
               end
               @#{storage_column}
             end        
-            protected
-              before_save :serialize_#{storage_column}
-              def serialize_#{storage_column}
-                self.#{storage_column} = self.#{storage_column}.to_json
-              end
+            before_save :serialize_#{storage_column}
+            def serialize_#{storage_column}
+              self.#{storage_column} = self.#{storage_column}.to_json
+            end
             RUBY
           end
           self.class_eval <<-RUBY
           attr_accessor :#{key}
           def #{key}=(val)
-            self.#{storage_column}_will_change!
+            self.#{storage_column}_will_change! unless self.#{storage_column}['#{key}'] == val
             self.#{storage_column}['#{key}'] = val
           end
           RUBY
@@ -46,6 +45,27 @@ module Plutolib
             end
             RUBY
           end
+        end
+
+        def serialized_column(storage_column, args=nil)
+          args ||= {}
+          default = args.member?(:default) ? args[:default] : 0
+          self.class_eval <<-RUBY
+          def #{storage_column}
+            if @#{storage_column}.nil?
+              if x = super
+                @#{storage_column} = x.is_a?(String) ? ActiveSupport::JSON.decode(x) : x
+              else
+                @#{storage_column} = Hash.new(#{default})
+              end
+            end
+            @#{storage_column}
+          end
+          before_save :serialize_#{storage_column}
+          def serialize_#{storage_column}
+            self.#{storage_column} = self.#{storage_column}.to_json
+          end
+          RUBY
         end
       end
     end
