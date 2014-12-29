@@ -61,16 +61,16 @@ module Plutolib
         column_formats = xls_column_formats(sheet_fields, sheet)
         row_number = 1
         sheet_data.each do |data_object|
-          sheet_row = sheet.row(sheet.last_row_index+1)
+          sheet_row = sheet.row(row_number)
           row_data = sheet_fields.map { |field| 
             field.value_for(data_object, self) 
           }
           sheet_row.push *row_data
-          # Rails.logger.debug row_data.inspect
           # Set formats for each cell in the row.
           for x in 0..row_data.size-1
-            # sheet[row_number, x] = row_data[x]
-            sheet_row.set_format(x, column_formats[x])
+            if format = column_formats[x]
+              sheet_row.set_format(x, format)
+            end
           end
           row_number += 1
         end
@@ -140,7 +140,7 @@ module Plutolib
               sheet.column(x).width = 11
               default_column_formats[x] = self.xls_date_format
             else
-              default_column_formats[x] = self.xls_text_format
+              default_column_formats[x] = nil #self.xls_text_format
             end
           end
         end
