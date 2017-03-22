@@ -50,13 +50,14 @@ module Plutolib
         def serialized_column(storage_column, args=nil)
           args ||= {}
           default = args.member?(:default) ? args[:default] : 0
+          type = args.member?(:type) ? args[:type] : Hash
           self.class_eval <<-RUBY
           def #{storage_column}
             if @#{storage_column}.nil?
               if x = super
                 @#{storage_column} = x.is_a?(String) ? ActiveSupport::JSON.decode(x) : x
               else
-                @#{storage_column} = Hash.new(#{default})
+                @#{storage_column} = #{type}.new(#{default})
               end
             end
             @#{storage_column}

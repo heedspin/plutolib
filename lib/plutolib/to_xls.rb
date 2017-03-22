@@ -77,6 +77,7 @@ module Plutolib
       end
       if export_file
         book.write export_file
+        true
       else
         s = StringIO.new
         book.write(s)

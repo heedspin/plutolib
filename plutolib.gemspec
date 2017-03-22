@@ -21,6 +21,7 @@ Gem::Specification.new do |s|
  
   s.required_rubygems_version = ">= 1.3.6"
   s.add_dependency 'active_hash'
+  s.add_dependency 'spreadsheet', '0.6.8'
  
   s.files        = Dir.glob("{bin,lib}/**/*") + %w(LICENSE-MIT README.md)
   s.require_path = 'lib'
