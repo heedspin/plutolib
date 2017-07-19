@@ -27,11 +27,20 @@ module Plutolib
                 raise ActiveRecord::AssociationTypeMismatch.new('Expected #{klass.name}, got ' + thing.class.name + ' ' + thing.to_s)
               end
             end
+          TEXT
+          if Rails::VERSION::MAJOR < 4
+          self.class_eval <<-TEXT
             scope :#{attr_key}, lambda { |val|
               {
                 :conditions => { #{foreign_key} => val.id }
               }
             }          
+          TEXT
+        else
+          self.class_eval <<-TEXT
+            scope :#{attr_key}, -> (val) {
+              where(#{foreign_key} => val.id)
+            }
           TEXT
         end
       end
