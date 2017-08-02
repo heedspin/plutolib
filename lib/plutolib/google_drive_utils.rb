@@ -1,11 +1,7 @@
 module Plutolib
   module GoogleDriveUtils
-    def gd_retries(&block)
-      Plutolib::GoogleDriveUtils.gd_retries(&block)
-    end
-    
     MAX_RETRIES=3
-    def self.gd_retries(&block)
+    def gd_retries(&block)
       attempts = 0
       while ((attempts += 1) <= MAX_RETRIES)
         begin
@@ -24,8 +20,10 @@ module Plutolib
       end
     end
 
-    def self.included(base)
-      base.include Plutolib::LoggerUtils
+    def self.included base
+      base.class_eval do
+        include Plutolib::LoggerUtils
+      end
     end
   end
 end
