@@ -52,6 +52,9 @@ module Plutolib
       end
       yield(nil, self.xls_fields, data)
     end
+
+    def data_hook(data_object)
+    end
     
     def to_xls(export_file=nil)
       book = Spreadsheet::Workbook.new
@@ -61,6 +64,7 @@ module Plutolib
         column_formats = xls_column_formats(sheet_fields, sheet)
         row_number = 1
         sheet_data.each do |data_object|
+          self.data_hook(data_object)
           sheet_row = sheet.row(row_number)
           row_data = sheet_fields.map { |field| 
             field.value_for(data_object, self) 
