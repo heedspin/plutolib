@@ -3,14 +3,29 @@
 # AppConfig = Plutolib::AppConfig.new
 module Plutolib
   class AppConfig
-    def initialize
-      config_file = [ File.join(M2mhub::Engine.root, 'config', 'main_config.yml'),
-                      File.join(Rails.root, 'config', 'main_config.yml') ].detect { |p| File.exist?(p) }
-      if config_file
-        @yaml_config = YAML::load(ERB.new(IO.read(config_file)).result)
-      else
-        @yaml_config = {}
+    def env_savvy_merge(path)
+      config = YAML::load(IO.read(path))
+      if config.member?(Rails.env.to_s)
+        config = config[Rails.env.to_s]
       end
+      @yaml_config.merge!(config)
+    end
+
+    def initialize
+      @yaml_config = {}
+      local_config = nil
+      app_config = nil
+      Dir.glob(File.join(Rails.root, 'config/app_config/*.y*ml')).each do |path|
+        if path.include?('/local_config.y')
+          local_config = path
+        elsif path.include?('/app_config.y')
+          app_config = path
+        else
+          env_savvy_merge(path)
+        end
+      end
+      env_savvy_merge(app_config) if app_config
+      env_savvy_merge(local_config) if local_config
     end
 
     def method_missing(mid, *args)
@@ -35,20 +50,8 @@ module Plutolib
       (@yaml_config['local_config'] ||= {})[key] = value
     end
 
-    # Check environment-specific setting first.  Then check shared setting.
     def get(key)
-      key = key.to_s
-      %w(local_config app_config m2mhub_config).each do |config_key|
-        if (config = @yaml_config[config_key])
-          if config_key == 'app_config'
-            next unless config = config[Rails.env.downcase]
-          end
-          if config.member?(key)
-            return config[key]
-          end
-        end
-      end
-      nil
+      @yaml_config[key.to_s]
     end
   end
 end
