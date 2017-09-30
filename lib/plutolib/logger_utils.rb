@@ -36,7 +36,7 @@ module Plutolib
       base.class_eval <<-RUBY
       @@loggers = nil
       def self.loggers
-        @@loggers ||= [AppConfig.delayed_job ? Delayed::Worker.logger : (ActiveRecord::Base.logger || Rails.logger)]
+        @@loggers ||= [::AppConfig.delayed_job ? Delayed::Worker.logger : (ActiveRecord::Base.logger || Rails.logger)]
       end
       @@logging_to_stdout = false
       def self.log_to_stdout
