@@ -1,3 +1,5 @@
+require 'active_hash'
+
 module Plutolib
   module ActiveHashMethods
     def self.included(base)
