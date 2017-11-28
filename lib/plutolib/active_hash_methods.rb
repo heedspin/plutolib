@@ -35,6 +35,38 @@ module Plutolib
       def to_s
         name
       end
+
+      def self.to_object(thing)
+        if thing.nil?
+          nil
+        elsif thing.is_a?(self)
+          thing
+        elsif thing.is_a?(Symbol)
+          self.send(thing)
+        elsif thing.is_a?(String)
+          if thing.to_i.to_s == thing
+            find(thing)
+          else
+            find_by_name(thing)
+          end
+        elsif thing.is_a?(Fixnum)
+          find(thing)
+        else
+          nil
+        end
+      end
+
+      def self.to_ids(*things)
+        to_objects(*things).map(&:id)
+      end
+
+      def self.to_objects(*things)
+        things.flatten.map { |s| to_object(s) }.compact
+      end
+
+      def self.to_id(thing)
+        to_object(thing).try(:id)
+      end
       RUBY
       # puts "evaluating:\n #{ruby}"
       base.class_eval ruby
