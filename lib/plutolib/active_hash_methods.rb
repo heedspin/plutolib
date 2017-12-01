@@ -67,6 +67,17 @@ module Plutolib
       def self.to_id(thing)
         to_object(thing).try(:id)
       end
+
+      def ==(rhs)
+        if rhs.is_a?(self.class)
+          self.name == rhs.name
+        elsif rhs.is_a?(String)
+          self.name == rhs
+        elsif rhs.is_a?(Symbol)
+          self.cmethod == rhs
+        end
+      end
+
       RUBY
       # puts "evaluating:\n #{ruby}"
       base.class_eval ruby
