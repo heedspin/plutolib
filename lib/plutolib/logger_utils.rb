@@ -57,7 +57,7 @@ module Plutolib
           "\n" + exception.class.name + ' ' + exception.message + "\n" + exception.backtrace.join("\n")
         end
         self.loggers.each do |logger|
-          logger.error self.class.name.demodulize + ': ' + msg + exception_msg
+          logger.error self.class.name.demodulize + ': ' + msg + (exception_msg || '')
         end
         msg
       end
