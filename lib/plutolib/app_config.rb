@@ -40,14 +40,14 @@ module Plutolib
           return !['0', 'false', 'nil'].include?(val.downcase)
         end
       elsif mid[mid.size-1, mid.size-1] == '='
-        set_local(mid[0,mid.size-1], args.first)
+        set(mid[0,mid.size-1], args.first)
       else
         get(mid)
       end
     end
 
-    def set_local(key, value)
-      (@yaml_config['local_config'] ||= {})[key] = value
+    def set(key, value)
+      @yaml_config[key.to_s] = value
     end
 
     def get(key)
