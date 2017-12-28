@@ -47,7 +47,7 @@ module Plutolib
           if thing.to_i.to_s == thing
             find(thing)
           else
-            find_by_name(thing)
+            find_by_alias(thing)
           end
         elsif thing.is_a?(Fixnum)
           find(thing)
@@ -77,6 +77,25 @@ module Plutolib
           self.cmethod == rhs
         end
       end
+
+      def self.find_by_alias(find_me)
+        all.find do |t|
+          t.alias_equals?(find_me)
+        end
+      end
+
+      def alias_equals?(find_me)
+        find_me = find_me.to_s.downcase
+        if @all_aliases.nil?
+          @all_aliases = [self.name]
+          if self.attributes.member?(:aliases)
+            @all_aliases = @all_aliases.concat(self.aliases || [])
+          end
+          @all_aliases = @all_aliases.map(&:downcase)
+        end
+        @all_aliases.any? { |a| a == find_me }
+      end
+
 
       RUBY
       # puts "evaluating:\n #{ruby}"
