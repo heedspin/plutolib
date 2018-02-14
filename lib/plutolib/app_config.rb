@@ -11,21 +11,25 @@ module Plutolib
       @yaml_config.merge!(config)
     end
 
-    def initialize
-      @yaml_config = {}
-      local_config = nil
-      app_config = nil
-      Dir.glob(File.join(Rails.root, 'config/app_config/*.y*ml')).each do |path|
-        if path.include?('/local_config.y')
-          local_config = path
-        elsif path.include?('/app_config.y')
-          app_config = path
-        else
-          env_savvy_merge(path)
+    def initialize(yaml_config=nil)
+      if yaml_config
+        @yaml_config = yaml_config
+      else
+        @yaml_config = {}
+        local_config = nil
+        app_config = nil
+        Dir.glob(File.join(Rails.root, 'config/app_config/*.y*ml')).each do |path|
+          if path.include?('/local_config.y')
+            local_config = path
+          elsif path.include?('/app_config.y')
+            app_config = path
+          else
+            env_savvy_merge(path)
+          end
         end
+        env_savvy_merge(app_config) if app_config
+        env_savvy_merge(local_config) if local_config
       end
-      env_savvy_merge(app_config) if app_config
-      env_savvy_merge(local_config) if local_config
     end
 
     def method_missing(mid, *args)
