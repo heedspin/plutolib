@@ -55,6 +55,10 @@ module Plutolib
 
     def data_hook(data_object)
     end
+
+    def skip_record?(data_object)
+      false
+    end
     
     def to_xls(export_file=nil)
       book = Spreadsheet::Workbook.new
@@ -65,6 +69,7 @@ module Plutolib
         row_number = 1
         sheet_data.each do |data_object|
           self.data_hook(data_object)
+          next if skip_record?(data_object)
           sheet_row = sheet.row(row_number)
           row_data = sheet_fields.map { |field| 
             field.value_for(data_object, self) 
