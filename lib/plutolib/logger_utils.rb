@@ -30,6 +30,11 @@ module Plutolib
         end
         msg
       end
+      def log_validation_errors(msg, obj)
+        validation_errors = []
+        obj.errors.each { |key,error| validation_errors.push("#{key} - #{error}") }
+        log_error(msg + ': ' + validation_errors.join(', '))
+      end
     end
     def self.included(base)
       base.send(:include, Methods)
@@ -60,6 +65,11 @@ module Plutolib
           logger.error self.class.name.demodulize + ': ' + msg + (exception_msg || '')
         end
         msg
+      end
+      def self.log_validation_errors(msg, obj)
+        validation_errors = []
+        obj.errors.each { |key,error| validation_errors.push("#{key} - #{error}") }
+        log_error(msg + ': ' + validation_errors.join(', '))
       end
       RUBY
     end
