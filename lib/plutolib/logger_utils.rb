@@ -32,7 +32,9 @@ module Plutolib
       end
       def log_validation_errors(msg, obj)
         validation_errors = []
-        obj.errors.each { |key,error| validation_errors.push("#{key} - #{error}") }
+        obj.errors.each { |key,error| 
+          validation_errors.push(key.to_s + ' - ' + error)
+        }
         log_error(msg + ': ' + validation_errors.join(', '))
       end
     end
@@ -68,7 +70,9 @@ module Plutolib
       end
       def self.log_validation_errors(msg, obj)
         validation_errors = []
-        obj.errors.each { |key,error| validation_errors.push("#{key} - #{error}") }
+        obj.errors.each { |key,error| 
+          validation_errors.push(key.to_s + ' - ' + error)
+        }
         log_error(msg + ': ' + validation_errors.join(', '))
       end
       RUBY
