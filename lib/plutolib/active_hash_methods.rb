@@ -49,8 +49,10 @@ module Plutolib
           else
             find_by_alias(thing)
           end
-        elsif thing.is_a?(Fixnum)
+        elsif thing.is_a?(Integer)
           find(thing)
+        elsif thing.is_a?(Enumerable)
+          thing.map { |t| to_object(t) }
         else
           nil
         end
