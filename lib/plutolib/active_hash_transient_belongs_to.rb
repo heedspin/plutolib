@@ -9,7 +9,7 @@ module Plutolib
           self.class_eval <<-RUBY
           attr_accessor :#{attribute_id} unless method_defined?(:#{attribute_id})
           def #{attribute_name}
-            @#{attribute_name} ||= #{class_name}.find_by_id(self.#{attribute_id})
+            @#{attribute_name} ||= #{class_name}.find_by(id: self.#{attribute_id})
           end
           def #{attribute_name}=(val)
             @#{attribute_name} = val

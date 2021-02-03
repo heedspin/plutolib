@@ -10,12 +10,12 @@ module Plutolib
           attr_id ||= "#{attr_key}_id"
           foreign_key = ":#{attr_id}"
           self.class_eval <<-TEXT
-            belongs_to_active_hash :#{attr_key}, :class_name => '#{klass.name}', :foreign_key => #{foreign_key}
+            belongs_to_active_hash :#{attr_key}, class_name: '#{klass.name}', foreign_key: #{foreign_key}
             def #{attr_key}=(thing)
               if thing.is_a?(#{klass.name})
                 write_attribute(#{foreign_key}, thing.id)
               elsif thing.is_a?(String) and thing.present?
-                if new_thing = (thing.to_i.to_s == thing ? #{klass.name}.find_by_id(thing) : #{klass.name}.find_by_name(thing))
+                if new_thing = (thing.to_i.to_s == thing ? #{klass.name}.find_by(id: thing) : #{klass.name}.find_by(name: thing))
                   write_attribute(#{foreign_key}, new_thing.id)
                 else
                   exc = thing + ' is not a valid #{klass.name}'
@@ -27,22 +27,10 @@ module Plutolib
                 raise ActiveRecord::AssociationTypeMismatch.new('Expected #{klass.name}, got ' + thing.class.name + ' ' + thing.to_s)
               end
             end
+            scope :#{attr_key}, -> (val) {
+              where(#{foreign_key} => val.id)
+            }
           TEXT
-          if Rails::VERSION::MAJOR < 4
-            self.class_eval <<-TEXT
-              scope :#{attr_key}, lambda { |val|
-                {
-                  :conditions => { #{foreign_key} => val.id }
-                }
-              }          
-            TEXT
-          else
-            self.class_eval <<-TEXT
-              scope :#{attr_key}, -> (val) {
-                where(#{foreign_key} => val.id)
-              }
-            TEXT
-          end
         end
       end
     end
