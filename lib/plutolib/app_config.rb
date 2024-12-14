@@ -32,6 +32,12 @@ module Plutolib
       end
     end
 
+    def load_config(path, merge_point=nil)
+      loaded_config = YAML::load(IO.read(path))
+      sub_config = merge_point.nil? ? @yaml_config : self.subset_hash(@yaml_config, merge_point)
+      sub_config.merge!(loaded_config)
+    end
+
     def method_missing(mid, *args)
       mid = mid.to_s
       if mid =~ /(.+)\?$/
@@ -56,6 +62,16 @@ module Plutolib
 
     def get(key)
       @yaml_config[key.to_s]
+    end
+
+    private
+
+    def subset_hash(hash, path_array)
+      path_array.reduce(hash) do |current, key|
+        return nil unless current.is_a?(Hash) && current.key?(key)
+
+        current[key]
+      end
     end
   end
 end
