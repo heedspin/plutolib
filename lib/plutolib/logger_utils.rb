@@ -8,8 +8,10 @@ module Plutolib
         @loggers ||= self.class.loggers.clone
       end
       def log_to_stdout
-        @logging_to_stdout = true
-        self.loggers.push Logger.new(STDOUT)
+        unless @logging_to_stdout
+          @logging_to_stdout = true
+          self.loggers.push Logger.new(STDOUT)
+        end
       end
       def logging_to_stdout?
         @logging_to_stdout
@@ -47,8 +49,10 @@ module Plutolib
       end
       @@logging_to_stdout = false
       def self.log_to_stdout
-        @@logging_to_stdout = true
-        self.loggers.push Logger.new(STDOUT)
+        unless @@logging_to_stdout
+          @@logging_to_stdout = true
+          self.loggers.push Logger.new(STDOUT)
+        end
       end
       def self.logging_to_stdout?
         @@logging_to_stdout
