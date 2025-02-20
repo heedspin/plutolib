@@ -4,7 +4,7 @@
 module Plutolib
   class AppConfig
     def env_savvy_merge(path)
-      config = YAML::load(IO.read(path))
+      config = YAML::load(IO.read(path), aliases: true)
       if config.member?(Rails.env.to_s)
         config = config[Rails.env.to_s]
       end
@@ -33,7 +33,7 @@ module Plutolib
     end
 
     def load_config(path, merge_point=nil)
-      loaded_config = YAML::load(IO.read(path))
+      loaded_config = YAML::load(IO.read(path), aliases: true)
       sub_config = merge_point.nil? ? @yaml_config : self.subset_hash(@yaml_config, merge_point)
       sub_config.merge!(loaded_config)
     end
